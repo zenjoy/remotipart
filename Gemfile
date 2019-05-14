@@ -8,3 +8,16 @@ group :development do
   #gemspec
 end
 
+group :development, :test do
+  gem 'appraisal'
+  gem 'jquery-rails'
+  gem 'sqlite3'
+  gem 'paperclip'
+  gem 'remotipart', path: '.'
+end
+
+group :test do
+  gem 'database_cleaner'
+  gem 'poltergeist'
+  gem 'rspec-rails'
+end
