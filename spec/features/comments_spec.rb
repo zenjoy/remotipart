@@ -83,10 +83,10 @@ describe 'comments', type: :feature do
     end
 
     within '#comments' do
-      expect(page).to have_content(comment_subject)
-      expect(page).to have_content(comment_body)
-      expect(page).to have_content(File.basename(file_path))
-      expect(page).to have_content(File.basename(other_file_path))
+      expect(page).to have_selector("td", text: comment_subject)
+      expect(page).to have_selector("td", text: comment_body)
+      expect(page).to have_selector("a", text: File.basename(file_path))
+      expect(page).to have_selector("a", text: File.basename(other_file_path))
     end
   end
 
@@ -151,6 +151,25 @@ describe 'comments', type: :feature do
   it "allows custom data-type on form", js: true do
     visit root_path
     page.execute_script("$(document).delegate('form', 'ajax:success', function(evt, data, status, xhr) { $('#comments').after(xhr.responseText); });")
+
+    click_link 'New Comment with Attachment'
+
+    # Needed to make test wait for above to finish
+    form = find('form')
+    page.execute_script("$('form').attr('data-type', 'html');")
+
+    file_path = File.join(fixture_path, 'qr.jpg')
+    fill_in 'comment_subject', with: 'Hi'
+    fill_in 'comment_body', with: 'there'
+    attach_file 'comment_attachment', file_path
+    click_button 'Create Comment'
+
+    expect(page).to have_content('HTML response')
+  end
+
+  it "allows users to use ajax response data safely", js: true do
+    visit root_path
+    page.execute_script("$(document).delegate('form', 'ajax:success', function(evt, data, status, xhr) { $('#comments').after(data); });")
 
     click_link 'New Comment with Attachment'
 
@@ -385,5 +404,11 @@ describe 'comments', type: :feature do
     click_button 'Create Comment'
 
     expect(page).to have_content('commit=')
+  end
+
+  it "doesn't allow XSS via script injection for text responses", js: true do
+    visit "/say?message=%3C/textarea%3E%3Csvg/onload=alert(domain)%3E&remotipart_submitted=x"
+    expect(page).to have_selector("textarea")
+    expect(find("textarea").value).to eq('</textarea><svg/onload=alert(domain)>')
   end
 end

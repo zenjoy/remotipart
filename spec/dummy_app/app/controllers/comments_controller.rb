@@ -34,7 +34,11 @@ class CommentsController < ApplicationController
     @comment = Comment.create(comment_params)
     if request.xhr? || remotipart_submitted?
       sleep 1 if params[:pause]
-      render (params[:template] == 'escape' ? 'comments/escape_test' : 'comments/create'), layout: false, status:(@comment.errors.any? ? :unprocessable_entity : :ok)
+      respond_to do |format|
+        format.html { render (params[:template] == 'escape' ? 'comments/escape_test' : 'comments/create'), layout: false }
+        format.js { render 'comments/create', layout: false, status:(@comment.errors.any? ? :unprocessable_entity : :ok) }
+        format.json { render json: @comment }
+      end
     else
       redirect_to comments_path
     end
@@ -50,6 +54,14 @@ class CommentsController < ApplicationController
 
   def destroy
     @comment = Comment.destroy(params[:id])
+  end
+
+  def say
+    if Rails.version < '4'
+      render text: params[:message], content_type: 'text/plain'
+    else
+      render plain: params[:message]
+    end
   end
 
   private
