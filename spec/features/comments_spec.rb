@@ -319,7 +319,7 @@ describe 'comments', type: :feature do
     expect(page).to have_content('no remotipart after!')
   end
 
-  it "only submits via remotipart when a file upload is present", js: true do
+  it "submits via remotipart when a file upload is present", js: true do
     visit root_path
     page.execute_script("$(document).delegate('form', 'ajax:remotipartSubmit', function(evt, xhr, data) { $('#comments').after('<div class=\"remotipart\">remotipart!</div>'); });")
 
@@ -332,27 +332,21 @@ describe 'comments', type: :feature do
     attach_file 'comment_attachment', file_path
     click_button 'Create Comment'
 
-    expect(page).to have_css("div.remotipart", :count => 1)
-    # Needed to force page capybara to wait for the above requests to finish
-    form = find('form')
+    expect(page).to have_css("div.remotipart")
+  end
 
-    # replace form html, in order clear out the file field (couldn't think of a better way)
-    page.evaluate_script("inputs = $('form').find(':file'); inputs.remove();")
+  it "does not submit via remotipart when a file upload is not present", js: true do
+    visit root_path
+    page.execute_script("$(document).delegate('form', 'ajax:remotipartSubmit', function(evt, xhr, data) { $('#comments').after('<div class=\"remotipart\">remotipart!</div>'); });")
+
+    click_link 'New Comment with Attachment'
+    page.execute_script("$('form').attr('data-type', 'html');")
+
     fill_in 'comment_subject', with: 'Hi'
     fill_in 'comment_body', with: 'there'
     click_button 'Create Comment'
 
-    expect(page).to have_css("div.remotipart", :count => 1)
-    # Needed to force page capybara to wait for the above requests to finish
-    form = find('form')
-
-    page.evaluate_script("$('form').append(inputs);")
-    fill_in 'comment_subject', with: 'Hi'
-    fill_in 'comment_body', with: 'there'
-    attach_file 'comment_attachment', file_path
-    click_button 'Create Comment'
-
-    expect(page).to have_css("div.remotipart", :count => 2)
+    expect(page).not_to have_css("div.remotipart")
   end
 
   it "Disables submit button while submitting with remotipart", js: true do
