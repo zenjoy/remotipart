@@ -8,6 +8,7 @@ require 'capybara/poltergeist'
 require 'database_cleaner'
 
 Capybara.javascript_driver = :poltergeist
+Capybara.server = :webrick
 Capybara.default_max_wait_time = 5
 
 # Requires supporting ruby files with custom matchers and macros, etc,
