@@ -1,5 +1,10 @@
 = History
 
+=== 1.4.3 / 2019-05-23
+
+* Fixed xhr.responseText not being populated.
+* Security: fixed cross-site scripting vulnerability when server renders user input.
+
 === 1.4.2 / 2018-04-25
 
 * Fixed ActionView::Template::Error in web-console.
