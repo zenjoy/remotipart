@@ -13,6 +13,6 @@ module DummyApp
     config.assets.paths << Rails.root.join("..", "..", "vendor", "assets", "javascripts")
     config.active_record.raise_in_transactional_callbacks = true if Rails::VERSION::MAJOR == 4 && Rails::VERSION::MINOR == 2
     config.active_record.time_zone_aware_types = [:datetime, :time] if Rails::VERSION::MAJOR >= 5
-    config.active_record.sqlite3.represent_boolean_as_integer = true if config.active_record.sqlite3.respond_to?(:represent_boolean_as_integer=)
+    config.active_record.sqlite3.represent_boolean_as_integer = true if config.active_record.sqlite3.respond_to?(:represent_boolean_as_integer=) && Rails::VERSION::MAJOR == 5 && Rails::VERSION::MINOR == 2
   end
 end

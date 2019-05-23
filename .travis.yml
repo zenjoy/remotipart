@@ -20,6 +20,7 @@ gemfile:
   - gemfiles/rails_3.2.gemfile
   - gemfiles/rails_4.2.gemfile
   - gemfiles/rails_5.2.gemfile
+  - gemfiles/rails_6.0.gemfile
 
 dist: trusty
 
@@ -28,7 +29,7 @@ sudo: false
 matrix:
   include:
     - env: JQUERY_VERSION=2
-      gemfile: gemfiles/rails_5.2.gemfile
+      gemfile: gemfiles/rails_6.0.gemfile
     - env: JQUERY_VERSION=3
-      gemfile: gemfiles/rails_5.2.gemfile
+      gemfile: gemfiles/rails_6.0.gemfile
   fast_finish: true
